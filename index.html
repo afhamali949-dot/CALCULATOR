@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scientific Calculator</title>
+<style>
+    
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #74ebd5, #acb6e5);
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    
+    header {
+        background: #1f1f1f;
+        color: #fff;
+        padding: 15px 30px;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    
+    .hero {
+        background: linear-gradient(135deg, #2193b0, #6dd5ed);
+        color: #fff;
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .calculator-container {
+        display: flex;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .calculator {
+        background: #1f1f1f;
+        border-radius: 20px;
+        padding: 20px;
+        max-width: 360px;
+        width: 100%;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+
+    .display {
+        background: #2b2b2b;
+        color: #fff;
+        font-size: 2rem;
+        text-align: right;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        min-height: 50px;
+        word-wrap: break-word;
+    }
+
+    .buttons {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: #fff;
+    }
+
+    .btn:hover { transform: scale(1.05); }
+
+    .btn.operator { background: #ff9500; }
+    .btn.function { background: #555; }
+    .btn.number { background: #333; }
+    .btn.equal { background: #00c853; grid-column: span 2; }
+    .btn.clear { background: #d32f2f; }
+
+    @media(max-width: 400px){
+        .hero h1 { font-size: 2.2rem; }
+        .hero p { font-size: 1rem; }
+        .btn { padding: 15px; font-size: 0.9rem; }
+        .display { font-size: 1.5rem; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    Scientific Calculator
+</header>
+
+<section class="hero">
+    <h1>Welcome to Scientific Calculator</h1>
+    <p>"Life’s problems may not always have a formula, but at least a calculator can help with the numbers.".</p>
+</section>
+
+
+<div class="calculator-container">
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="btn function clear" onclick="clearDisplay()">C</button>
+            <button class="btn function" onclick="backspace()">&larr;</button>
+            <button class="btn function" onclick="insert('(')">(</button>
+            <button class="btn function" onclick="insert(')')">)</button>
+            <button class="btn operator" onclick="insert('/')">÷</button>
+
+            <button class="btn function" onclick="insert('sin(')">sin</button>
+            <button class="btn function" onclick="insert('cos(')">cos</button>
+            <button class="btn function" onclick="insert('tan(')">tan</button>
+            <button class="btn function" onclick="insert('log(')">log</button>
+            <button class="btn operator" onclick="insert('*')">×</button>
+
+            <button class="btn number" onclick="insert('7')">7</button>
+            <button class="btn number" onclick="insert('8')">8</button>
+            <button class="btn number" onclick="insert('9')">9</button>
+            <button class="btn operator" onclick="insert('**')">^</button>
+            <button class="btn operator" onclick="insert('-')">−</button>
+
+            <button class="btn number" onclick="insert('4')">4</button>
+            <button class="btn number" onclick="insert('5')">5</button>
+            <button class="btn number" onclick="insert('6')">6</button>
+            <button class="btn function" onclick="insert('sqrt(')">√</button>
+            <button class="btn operator" onclick="insert('+')">+</button>
+
+            <button class="btn number" onclick="insert('1')">1</button>
+            <button class="btn number" onclick="insert('2')">2</button>
+            <button class="btn number" onclick="insert('3')">3</button>
+            <button class="btn number" onclick="insert('0')">0</button>
+            <button class="btn number" onclick="insert('.')">.</button>
+
+            <button class="btn equal" onclick="calculate()">=</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const display = document.getElementById('display');
+
+    function insert(value) {
+        if(display.innerText === "0") display.innerText = value;
+        else display.innerText += value;
+    }
+
+    function clearDisplay() {
+        display.innerText = "0";
+    }
+
+    function backspace() {
+        if(display.innerText.length > 1) display.innerText = display.innerText.slice(0,-1);
+        else display.innerText = "0";
+    }
+
+    function calculate() {
+        let expression = display.innerText;
+
+        try {
+            
+            expression = expression.replace(/sqrt\(/g, 'Math.sqrt(');
+            expression = expression.replace(/sin\(/g, 'Math.sin(');
+            expression = expression.replace(/cos\(/g, 'Math.cos(');
+            expression = expression.replace(/tan\(/g, 'Math.tan(');
+            expression = expression.replace(/log\(/g, 'Math.log10(');
+
+            expression = expression.replace(/Math\.sin\(([^)]+)\)/g, (_, val) => `Math.sin((${val})*Math.PI/180)`);
+            expression = expression.replace(/Math\.cos\(([^)]+)\)/g, (_, val) => `Math.cos((${val})*Math.PI/180)`);
+            expression = expression.replace(/Math\.tan\(([^)]+)\)/g, (_, val) => `Math.tan((${val})*Math.PI/180)`);
+
+            let result = Function('"use strict"; return (' + expression + ')')();
+            display.innerText = result;
+        } catch {
+            display.innerText = "Error";
+        }
+    }
+</script>
+
+</body>
+</html>
